@@ -1,4 +1,4 @@
-package com.smartmart.demo.Security;
+package com.smartmart.demo.security;
 
 
 import io.jsonwebtoken.Jwts;
@@ -30,7 +30,7 @@ public class JwtTokenProvider {
     }
 
     public String getUserIdFromToken(String token) {
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
                 .build()
                 .parseClaimsJws(token)
@@ -40,7 +40,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
+            Jwts.parser()
                     .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
                     .build()
                     .parseClaimsJws(token);
