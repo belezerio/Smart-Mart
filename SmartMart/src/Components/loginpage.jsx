@@ -28,11 +28,30 @@ export default function AuthPage() {
     setRole(null);
   };
 
-  const handleSubmit = () => {
-    console.log({ mode, role, ...formData });
-    // Here you would typically send data to your backend
-  };
-
+ const handleSubmit = async () => {
+  try {
+    const endpoint = mode === 'signin' ? '/api/auth/login' : '/api/auth/signup';
+    const response = await fetch(`http://localhost:8080${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mode === 'signin' 
+        ? { email: formData.email, password: formData.password }
+        : { ...formData, role }
+      ),
+    });
+    
+    const data = await response.json();
+    if (data.success) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+    } else {
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
   const isFormValid = mode === 'signin'
     ? formData.email && formData.password
     : formData.email && formData.password && formData.confirmPassword && formData.fullName && formData.password === formData.confirmPassword;
